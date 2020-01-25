@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "com.parzivail.lightlevel.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+  ],
+  "client": [
+	"WorldRenderMixin", "MinecraftClientMixin"
+  ],
+  "injectors": {
+	"defaultRequire": 1
+  }
+}
