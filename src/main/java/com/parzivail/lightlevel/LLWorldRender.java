@@ -5,18 +5,18 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.*;
-import net.minecraft.client.util.math.Matrix4f;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Matrix4f;
 import net.minecraft.util.math.Quaternion;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.LightType;
 
 public class LLWorldRender
 {
-	private static VertexConsumerProvider vertConsumer;
+	private static final VertexConsumerProvider vertConsumer;
 
 	static
 	{
@@ -37,7 +37,7 @@ public class LLWorldRender
 		if (player == null || world == null)
 			return;
 
-		TextRenderer f = client.getFontManager().getTextRenderer(MinecraftClient.DEFAULT_TEXT_RENDERER_ID);
+		TextRenderer f = client.textRenderer;
 		if (f == null)
 			return;
 
@@ -67,9 +67,6 @@ public class LLWorldRender
 					matrices.translate(queryPos.getX(), queryPos.getY(), queryPos.getZ());
 					matrices.multiply(new Quaternion(Vector3f.POSITIVE_X, -90, true));
 					matrices.scale(s, -s, s);
-					matrix4f = matrices.peek().getModel();
-					RenderSystem.pushMatrix();
-					RenderSystem.multMatrix(matrix4f);
 
 					int blockLight = world.getLightLevel(LightType.BLOCK, queryPos);
 					int skyLight = world.getLightLevel(LightType.SKY, queryPos);
@@ -86,15 +83,13 @@ public class LLWorldRender
 
 					if (showBothValues)
 					{
-						drawNumber(f, "■" + blockLight, color, 8, 8);
-						drawNumber(f, "☀" + skyLight, color, 19, 18);
+						drawNumber(matrices, f, "■" + blockLight, color, 8, 8);
+						drawNumber(matrices, f, "☀" + skyLight, color, 19, 18);
 					}
 					else
-						drawNumber(f, String.valueOf(blockLight), color, 8, 8);
+						drawNumber(matrices, f, String.valueOf(blockLight), color, 8, 8);
 
 					matrices.pop();
-
-					RenderSystem.popMatrix();
 				}
 
 		matrices.pop();
@@ -102,12 +97,12 @@ public class LLWorldRender
 		RenderSystem.disablePolygonOffset();
 	}
 
-	private static void drawNumber(TextRenderer f, String str, int color, int offsetX, int offsetY)
+	private static void drawNumber(MatrixStack matrices, TextRenderer f, String str, int color, int offsetX, int offsetY)
 	{
-		int w = f.getStringWidth(str);
+		int w = f.getWidth(str);
 
-		RenderSystem.translated(offsetX - w / 2f, offsetY + 1 - f.fontHeight / 2f, 0);
+		matrices.translate(offsetX - w / 2f, offsetY + 1 - f.fontHeight / 2f, 0);
 
-		f.drawWithShadow(str, 0, 0, color);
+		f.drawWithShadow(matrices, str, 0, 0, color);
 	}
 }
