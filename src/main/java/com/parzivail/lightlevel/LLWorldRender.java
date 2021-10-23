@@ -6,12 +6,12 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Matrix4f;
 import net.minecraft.util.math.Quaternion;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3f;
 import net.minecraft.world.LightType;
 
 public class LLWorldRender
@@ -65,7 +65,7 @@ public class LLWorldRender
 
 					matrices.push();
 					matrices.translate(queryPos.getX(), queryPos.getY(), queryPos.getZ());
-					matrices.multiply(new Quaternion(Vector3f.POSITIVE_X, -90, true));
+					matrices.multiply(new Quaternion(Vec3f.POSITIVE_X, -90, true));
 					matrices.scale(s, -s, s);
 
 					int blockLight = world.getLightLevel(LightType.BLOCK, queryPos);
