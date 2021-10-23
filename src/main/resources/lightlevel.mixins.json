@@ -5,7 +5,7 @@
   "mixins": [
   ],
   "client": [
-	"WorldRenderMixin", "MinecraftClientMixin"
+	"MinecraftClientMixin"
   ],
   "injectors": {
 	"defaultRequire": 1

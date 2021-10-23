@@ -1,6 +1,7 @@
 package com.parzivail.lightlevel;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -23,7 +24,7 @@ public class LLWorldRender
 		vertConsumer = VertexConsumerProvider.immediate(new BufferBuilder(256));
 	}
 
-	public static void render(MatrixStack matrices, float tickDelta, long limitTime, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer, LightmapTextureManager lightmapTextureManager, Matrix4f matrix4f)
+	private static void render(MatrixStack matrices, float tickDelta, long limitTime, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer, LightmapTextureManager lightmapTextureManager, Matrix4f matrix4f)
 	{
 		if (!LightLevel.isEnabled())
 			return;
@@ -104,5 +105,17 @@ public class LLWorldRender
 		matrices.translate(offsetX - w / 2f, offsetY + 1 - f.fontHeight / 2f, 0);
 
 		f.drawWithShadow(matrices, str, 0, 0, color);
+	}
+
+	public static void afterTranslucent(WorldRenderContext wrc) {
+		if (wrc.advancedTranslucency()) {
+			LLWorldRender.render(wrc.matrixStack(), wrc.tickDelta(), wrc.limitTime(), wrc.blockOutlines(), wrc.camera(), wrc.gameRenderer(), wrc.lightmapTextureManager(), wrc.projectionMatrix());
+		}
+	}
+
+	public static void onEnd(WorldRenderContext wrc) {
+		if (!wrc.advancedTranslucency()) {
+			LLWorldRender.render(wrc.matrixStack(), wrc.tickDelta(), wrc.limitTime(), wrc.blockOutlines(), wrc.camera(), wrc.gameRenderer(), wrc.lightmapTextureManager(), wrc.projectionMatrix());
+		}
 	}
 }
