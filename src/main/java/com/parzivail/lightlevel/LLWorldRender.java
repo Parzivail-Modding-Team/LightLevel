@@ -6,10 +6,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Matrix4f;
-import net.minecraft.util.math.Quaternion;
-import net.minecraft.util.math.Vec3f;
+import net.minecraft.util.math.*;
 import net.minecraft.world.LightType;
 
 public class LLWorldRender
@@ -51,6 +48,7 @@ public class LLWorldRender
 		frustum.setPosition(pos.x, pos.y, pos.z);
 
 		var playerPos = player.getBlockPos();
+		var playerPosFract = player.getLerpedPos(tickDelta).add(-playerPos.getX(), -playerPos.getY(), -playerPos.getZ());
 		matrices.translate(-pos.x, -pos.y, -pos.z);
 		matrices.translate(playerPos.getX(), playerPos.getY(), playerPos.getZ());
 
@@ -71,6 +69,11 @@ public class LLWorldRender
 					matrices.push();
 					matrices.translate(x, y, z);
 					matrices.multiply(q);
+
+					matrices.translate(0.5f, -0.5f, 0);
+					matrices.multiply(new Quaternion(0, 0, (float)(MathHelper.atan2(x + 0.5f - playerPosFract.x, z + 0.5f - playerPosFract.z) + Math.PI), false));
+					matrices.translate(-0.5f, 0.5f, 0);
+
 					matrices.scale(s, -s, 1);
 
 					var blockLight = world.getLightLevel(LightType.BLOCK, queryPos);
