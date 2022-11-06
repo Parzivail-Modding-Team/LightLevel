@@ -1,28 +1,30 @@
 {
-  "schemaVersion": 1,
-  "id": "lightlevel",
-  "version": "${version}",
-  "name": "Light Level",
-  "description": "Shows an ingame overlay with the light level for each block",
-  "authors": [
-	"parzivail"
-  ],
-  "contact": {
-	"homepage": "https://github.com/Parzivail-Modding-Team/LightLevel",
-	"sources": "https://github.com/Parzivail-Modding-Team/LightLevel"
-  },
-  "license": "MIT",
-  "icon": "assets/lightlevel/icon.png",
-  "environment": "*",
-  "entrypoints": {
-	"client": [
-	  "com.parzivail.lightlevel.LightLevel"
-	]
-  },
-  "mixins": [
-	"lightlevel.mixins.json"
-  ],
-  "suggests": {
-	"flamingo": "*"
-  }
+	"schemaVersion": 1,
+	"id": "lightlevel",
+	"version": "${version}",
+	"name": "Light Level",
+	"description": "Shows an ingame overlay with the light level for each block",
+	"authors": [
+		"parzivail"
+	],
+	"contact": {
+		"homepage": "https://github.com/Parzivail-Modding-Team/LightLevel",
+		"sources": "https://github.com/Parzivail-Modding-Team/LightLevel"
+	},
+	"license": "MIT",
+	"icon": "assets/lightlevel/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"client": [
+			"com.parzivail.lightlevel.LightLevel"
+		]
+	},
+	"mixins": [
+		"lightlevel.mixins.json"
+	],
+	"depends": {
+		"fabric-api": ">=0.62.0",
+		"fabricloader": ">=0.14.9",
+		"minecraft": "~1.19"
+	}
 }
