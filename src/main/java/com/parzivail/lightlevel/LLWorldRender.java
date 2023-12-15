@@ -6,8 +6,11 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.*;
+import net.minecraft.util.math.Box;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.LightType;
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 
 public class LLWorldRender
 {
@@ -40,7 +43,7 @@ public class LLWorldRender
 
 		matrices.push();
 
-		var showBothValues = client.options.debugEnabled;
+		var showBothValues = client.getDebugHud().shouldShowDebugHud();
 
 		var s = showBothValues ? 1 / 32f : 1 / 16f;
 
@@ -53,12 +56,12 @@ public class LLWorldRender
 		matrices.translate(playerPos.getX(), playerPos.getY(), playerPos.getZ());
 
 		var mutablePos = playerPos.mutableCopy();
-		var q = new Quaternion(Vec3f.POSITIVE_X, -90, true);
+		var q = new Quaternionf().rotateX((float)Math.PI / 2);
 
 		VertexConsumerProvider.Immediate immediate = VertexConsumerProvider.immediate(Tessellator.getInstance().getBuffer());
 
 		for (int x = -16; x < 16; x++)
-			for (int y = -16; y < 2; y++)
+			for (int y = -16; y < 4; y++)
 				for (int z = -16; z < 16; z++)
 				{
 					var queryPos = mutablePos.set(playerPos, x, y, z);
@@ -70,11 +73,12 @@ public class LLWorldRender
 					matrices.translate(x, y, z);
 					matrices.multiply(q);
 
-					matrices.translate(0.5f, -0.5f, 0);
-					matrices.multiply(new Quaternion(0, 0, (float)(MathHelper.atan2(x + 0.5f - playerPosFract.x, z + 0.5f - playerPosFract.z) + Math.PI), false));
-					matrices.translate(-0.5f, 0.5f, 0);
+					matrices.translate(0.5f, 0.5f, 0);
+					var q2 = new Quaternionf().rotateZ(-(float)(MathHelper.atan2(x + 0.5f - playerPosFract.x, z + 0.5f - playerPosFract.z) + Math.PI));
+					matrices.multiply(q2);
+					matrices.translate(-0.5f, -0.5f, 0);
 
-					matrices.scale(s, -s, 1);
+					matrices.scale(s, s, 1);
 
 					var blockLight = world.getLightLevel(LightType.BLOCK, queryPos);
 					var skyLight = world.getLightLevel(LightType.SKY, queryPos);
@@ -114,9 +118,9 @@ public class LLWorldRender
 	{
 		matrices.push();
 		matrices.translate(offsetX - str.length() * 3.5f, offsetY + 1 - f.fontHeight / 2f, 0);
-		f.draw(str, 0, 0, color & 0x3F3F3F, false, matrices.peek().getPositionMatrix(), immediate, false, 0, 0xF000F0, false);
-		matrices.translate(-1.1, -0.9, 0.0005);
-		f.draw(str, 0, 0, color, false, matrices.peek().getPositionMatrix(), immediate, false, 0, 0xF000F0, false);
+		f.draw(str, 0, 0, color & 0x3F3F3F, false, matrices.peek().getPositionMatrix(), immediate, TextRenderer.TextLayerType.NORMAL, 0, 0xF000F0, false);
+		matrices.translate(-1.1, -0.9, -0.0005);
+		f.draw(str, 0, 0, color, false, matrices.peek().getPositionMatrix(), immediate, TextRenderer.TextLayerType.NORMAL, 0, 0xF000F0, false);
 		matrices.pop();
 	}
 
